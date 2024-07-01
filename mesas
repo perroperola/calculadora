@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ravintolan Kustannuslaskin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ravintolan Kustannuslaskin</h1>
+        <div class="form-group">
+            <label for="totalSize">Kokonaispinta-ala (m2):</label>
+            <input type="number" id="totalSize" required>
+        </div>
+        <div class="form-group">
+            <label for="roomSize">Huoneen koko (m2):</label>
+            <input type="number" id="roomSize" required>
+        </div>
+        <div class="form-group">
+            <label for="rentPerM2">Vuokra (m2 per vuosi):</label>
+            <input type="number" id="rentPerM2" required>
+        </div>
+        <div class="form-group">
+            <label for="avgBill">Keskimääräinen lasku (1 henkilö):</label>
+            <input type="number" id="avgBill" required>
+        </div>
+        <div class="form-group">
+            <label for="avgStaffCost">Keskimääräinen henkilöstökustannus (tunti):</label>
+            <input type="number" id="avgStaffCost" required>
+        </div>
+        <div class="form-group">
+            <label for="depreciationTerm">Poistoaika (vuodet):</label>
+            <input type="number" id="depreciationTerm" required>
+        </div>
+        <div class="form-group">
+            <label for="leasholdCost">Leashold-kustannukset (€):</label>
+            <input type="number" id="leasholdCost" required>
+        </div>
+        <div class="form-group">
+            <label for="irtInvestment">IRT-teknologiainvestointi (€):</label>
+            <input type="number" id="irtInvestment" required>
+        </div>
+        <div class="form-group">
+            <label for="kitchenCost">Keittiölaitteiden kustannukset (€):</label>
+            <input type="number" id="kitchenCost" required>
+        </div>
+        <div class="form-group">
+            <label for="renovationCost">Remonttikustannukset (€):</label>
+            <input type="number" id="renovationCost" required>
+        </div>
+        <div class="form-group">
+            <label for="numTables">Pöytien määrä:</label>
+            <input type="number" id="numTables" required>
+        </div>
+        <div class="form-group">
+            <label for="numSeats">Istumapaikkojen määrä:</label>
+            <input type="number" id="numSeats" required>
+        </div>
+        <div class="form-group">
+            <label for="visitorsPerSeat">Vieraita per istumapaikka per päivä:</label>
+            <input type="number" id="visitorsPerSeat" required>
+        </div>
+        <div class="form-group">
+            <label for="numWaiters">Tarjoilijoiden määrä:</label>
+            <input type="number" id="numWaiters" required>
+        </div>
+        <div class="form-group">
+            <label for="numKitchenStaff">Keittiöhenkilökunnan määrä:</label>
+            <input type="number" id="numKitchenStaff" required>
+        </div>
+        <div class="form-group">
+            <label for="numManagers">Managerin määrä:</label>
+            <input type="number" id="numManagers" required>
+        </div>
+        <button onclick="calculateCosts()">Laske</button>
+        <h2>Kustannusten yhteenveto:</h2>
+        <div id="results"></div>
+    </div>
+    <script>
+        function calculateCosts() {
+            const totalSize = parseFloat(document.getElementById('totalSize').value);
+            const roomSize = parseFloat(document.getElementById('roomSize').value);
+            const rentPerM2 = parseFloat(document.getElementById('rentPerM2').value);
+            const avgBill = parseFloat(document.getElementById('avgBill').value);
+            const avgStaffCost = parseFloat(document.getElementById('avgStaffCost').value);
+            const depreciationTerm = parseFloat(document.getElementById('depreciationTerm').value);
+            const leasholdCost = parseFloat(document.getElementById('leasholdCost').value);
+            const irtInvestment = parseFloat(document.getElementById('irtInvestment').value);
+            const kitchenCost = parseFloat(document.getElementById('kitchenCost').value);
+            const renovationCost = parseFloat(document.getElementById('renovationCost').value);
+            const numTables = parseFloat(document.getElementById('numTables').value);
+            const numSeats = parseFloat(document.getElementById('numSeats').value);
+            const visitorsPerSeat = parseFloat(document.getElementById('visitorsPerSeat').value);
+            const numWaiters = parseFloat(document.getElementById('numWaiters').value);
+            const numKitchenStaff = parseFloat(document.getElementById('numKitchenStaff').value);
+            const numManagers = parseFloat(document.getElementById('numManagers').value);
+
+            const visitorsPerDay = numSeats * visitorsPerSeat;
+            const visitorsPerYear = visitorsPerDay * 365;
+            const foodRevenue = visitorsPerYear * avgBill;
+            const foodCost = foodRevenue * 0.3; // Oletus: 30% kustannukset
+            const staffCost = ((numWaiters + numKitchenStaff + numManagers) * avgStaffCost * 8 * 365);
+            const rentCost = totalSize * rentPerM2;
+            const supplyCost = 50000; // Kiinteä arvo, voidaan muuttaa
+            const kitchenDepreciation = kitchenCost / depreciationTerm;
+            const renovationDepreciation = renovationCost / depreciationTerm;
+            const irtDepreciation = irtInvestment / depreciationTerm;
+
+            const totalDepreciation = kitchenDepreciation + renovationDepreciation + irtDepreciation;
+            const totalExpenses = foodCost + staffCost + rentCost + supplyCost + totalDepreciation;
+            const profitBeforeTaxes = foodRevenue - totalExpenses;
+            const profitAfterTaxes = profitBeforeTaxes * 0.72; // Oletus: 28% verot
+
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <p>Vuotuiset vierailijat: ${visitorsPerYear.toFixed(2)}</p>
+                <p>Ruokamyynti: ${foodRevenue.toFixed(2)} €</p>
+                <p>Ruokakustannukset: ${foodCost.toFixed(2)} €</p>
+                <p>Henkilöstökustannukset: ${staffCost.toFixed(2)} €</p>
+                <p>Vuokrakustannukset: ${rentCost.toFixed(2)} €</p>
+                <p>Tarvikekustannukset: ${supplyCost.toFixed(2)} €</p>
+                <p>Keittiölaitteiden poistot: ${kitchenDepreciation.toFixed(2)} €</p>
+                <p>Remontin poistot: ${renovationDepreciation.toFixed(2)} €</p>
+                <p>IRT-teknologian poistot: ${irtDepreciation.toFixed(2)} €</p>
+                <p>Kokonaispoistot: ${totalDepreciation.toFixed(2)} €</p>
+                <p>Kokonaiskustannukset: ${totalExpenses.toFixed(2)} €</p>
+                <p>Voitto ennen veroja: ${profitBeforeTaxes.toFixed(2)} €</p>
+                <p### HTML (jatkoa)
+```html
+                <p>Voitto ennen veroja: ${profitBeforeTaxes.toFixed(2)} €</p>
+                <p>Voitto verojen jälkeen: ${profitAfterTaxes.toFixed(2)} €</p>
+            `;
+        }
+    </script>
+</body>
+</html>
